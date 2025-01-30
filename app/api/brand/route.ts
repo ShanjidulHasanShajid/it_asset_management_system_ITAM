@@ -16,6 +16,7 @@ export async function GET() {
     const [rows] = await db.execute("SELECT * FROM brands_t");
     return NextResponse.json(rows);
   } catch (error) {
+    console.error("Database error:", error);
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 }

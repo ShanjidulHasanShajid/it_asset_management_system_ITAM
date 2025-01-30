@@ -1,21 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -23,26 +11,51 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
-const equipmentList = [
-  { value: "printer", label: "Printer" },
-  { value: "switch", label: "Switch" },
-  { value: "router", label: "Router" },
-];
 
-const handleSubmit = (e: { preventDefault: () => void }) => {
-  e.preventDefault();
-  // Handle form submission
-};
+interface Brand {
+  brand_id: string;
+  brand_name: string;
+}
 
-export default function AddModel() {
+interface AddModelProps {
+  onModelAdded: () => void;
+  brands: Brand[];
+}
+
+export default function AddModel({ onModelAdded, brands }: AddModelProps) {
+  const [modelName, setModelName] = useState("");
+  const [brandId, setBrandId] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch("/api/brandmodel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model_name: modelName,
+          brand_id: brandId,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Model added successfully!");
+        setModelName("");
+        setBrandId("");
+        onModelAdded();
+      } else {
+        alert("Failed to add model.");
+      }
+    } catch (error) {
+      console.error("Error adding model:", error);
+      alert("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8 p-4">
       <Card>
@@ -51,15 +64,15 @@ export default function AddModel() {
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="statusDetails">Brand name</Label>
-            <Select>
+            <Label>Brand Name</Label>
+            <Select onValueChange={(value) => setBrandId(value)}>
               <SelectTrigger>
-                <SelectValue placeholder="Select Brand name" />
+                <SelectValue placeholder="Select Brand" />
               </SelectTrigger>
               <SelectContent>
-                {equipmentList.map((item, index) => (
-                  <SelectItem key={index} value={item.value}>
-                    {item.label}
+                {brands.map((brand) => (
+                  <SelectItem key={brand.brand_id} value={brand.brand_id}>
+                    {brand.brand_name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -68,29 +81,17 @@ export default function AddModel() {
 
           <div className="space-y-2">
             <Label htmlFor="itemVariation">Model name</Label>
-            <Input id="itemVariation" placeholder="Enter sub-category name" />
+            <Input
+              value={modelName}
+              onChange={(e) => setModelName(e.target.value)}
+              placeholder="Model Name"
+            />
           </div>
-          <div></div>
-          <AlertDialog>
-            <AlertDialogTrigger>
-              <div className="flex justify-end space-x-4">
-                <Button type="submit">Submit</Button>
-              </div>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Adding new Sub-Category</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action will add another sub category to the database. Are
-                  you sure about this?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction>Yes</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <div className="sm:col-span-2 flex justify-end space-x-4">
+            <Button type="submit" disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </form>

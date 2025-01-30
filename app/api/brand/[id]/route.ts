@@ -18,7 +18,7 @@ export async function DELETE(
   try {
     const id = params.id;
 
-    // First, delete related models
+    // Delete related models first
     await db.execute("DELETE FROM model_t WHERE brand_id = ?", [id]);
 
     // Then delete the brand
