@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   House,
@@ -18,59 +18,10 @@ import Link from "next/link";
 import TableView from "@/components/ui/tableView";
 import AddUser from "@/components/ui/addUser";
 
-const dummyData = [
-  {
-    userID: "EQ001",
-    userName: "Dell Laptop",
-    password: "1234",
-    teamID: "teamID",
-  },
-  {
-    userID: "EQ001",
-    userName: "Dell Laptop",
-    password: "1234",
-    teamID: "teamID",
-  },
-  {
-    userID: "EQ001",
-    userName: "Dell Laptop",
-    password: "1234",
-    teamID: "teamID",
-  },
-  {
-    userID: "EQ001",
-    userName: "Dell Laptop",
-    password: "1234",
-    teamID: "teamID",
-  },
-  {
-    userID: "EQ001",
-    userName: "Dell Laptop",
-    password: "1234",
-    teamID: "teamID",
-  },
-  {
-    userID: "EQ001",
-    userName: "Dell Laptop",
-    password: "1234",
-    teamID: "teamID",
-  },
-  {
-    userID: "EQ001",
-    userName: "Dell Laptop",
-    password: "1234",
-    teamID: "teamID",
-  },
-];
-const columns = [
-  { key: "userID", label: "User ID" },
-  { key: "userName", label: "User Name" },
-  { key: "password", label: "Password" },
-  { key: "teamID", label: "Team ID" },
-];
-
 const UserAdministration = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [teams, setTeams] = useState([]);
 
   const menuItems = [
     {
@@ -115,6 +66,31 @@ const UserAdministration = () => {
     name: "John Doe",
     uid: "AD123456",
   };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("/api/user");
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const fetchTeams = async () => {
+    try {
+      const response = await fetch("/api/team");
+      const data = await response.json();
+      setTeams(data);
+    } catch (error) {
+      console.error("Error fetching teams:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+    fetchTeams();
+  }, []);
 
   return (
     <div className="flex h-screen bg-slate-50">
@@ -208,7 +184,7 @@ const UserAdministration = () => {
                 Add New User
               </h3>
               <div className="bg-slate-50 rounded-lg p-4">
-                <AddUser />
+                <AddUser onUserAdded={fetchUsers} teams={teams} />
               </div>
             </div>
           </div>
@@ -220,7 +196,22 @@ const UserAdministration = () => {
                 Users Table
               </h3>
               <div className="border border-slate-200 rounded-lg overflow-hidden">
-                <TableView data={dummyData} columns={columns} onDelete={true} />
+                <TableView
+                  data={users}
+                  columns={[
+                    { key: "user_id", label: "User ID" },
+                    { key: "user_name", label: "User Name" },
+                    { key: "password", label: "Password" },
+                    { key: "team_name", label: "Team" },
+                    { key: "dept", label: "Department" },
+                  ]}
+                  onDelete={async (row) => {
+                    await fetch(`/api/user/${row.user_id}`, {
+                      method: "DELETE",
+                    });
+                    fetchUsers();
+                  }}
+                />
               </div>
             </div>
           </div>
