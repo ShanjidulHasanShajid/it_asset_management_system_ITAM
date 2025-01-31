@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import EquipmentForm from "@/components/ui/assetForm";
 import {
@@ -15,7 +15,6 @@ import {
   ClipboardPlus,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
 import Link from "next/link";
 
 const UpdateAsset = () => {
@@ -65,14 +64,13 @@ const UpdateAsset = () => {
     uid: "AD123456",
   };
 
-  //this bit should be a component itself
   return (
-    <div className="flex h-screen bg-gray-100 relative">
-      {/* Mobile Toggle Button */}
+    <div className="flex h-screen bg-slate-50">
+      {/* Sidebar Toggle Button */}
       <Button
         variant="outline"
         size="icon"
-        className="lg:hidden absolute top-4 left-4 z-50"
+        className="lg:hidden fixed top-4 left-4 z-50 bg-white shadow-md hover:bg-slate-100"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         <Menu className="h-4 w-4" />
@@ -81,25 +79,30 @@ const UpdateAsset = () => {
       {/* Sidebar */}
       <div
         className={`
-        fixed lg:static inset-y-0 left-0 
-        transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0 transition-transform duration-300 ease-in-out
-        w-64 bg-white shadow-lg flex flex-col z-40
-      `}
+          fixed lg:static inset-y-0 left-0 
+          transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:translate-x-0 transition-transform duration-300 ease-in-out
+          w-72 bg-white shadow-lg flex flex-col z-40 border-r border-slate-200
+        `}
       >
-        {/* Logo/Title Section */}
-        <div className="p-6 pl-16 lg:pl-6">
-          {/* Added padding-left for spacing */}
-          <h1 className="text-xl font-bold">Super Admin Dashboard</h1>
+        {/* Dashboard Title */}
+        <div className="p-6 bg-gradient-to-r from-slate-50 to-white">
+          <h1 className="text-xl font-semibold text-slate-800">
+            Super Admin Dashboard
+          </h1>
         </div>
-        <Separator />
+        <Separator className="opacity-50" />
+
         {/* Navigation Menu */}
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
+        <nav className="flex-1 p-4 overflow-y-auto">
+          <ul className="space-y-1">
             {menuItems.map((item) => (
               <li key={item.id}>
                 <Link href={item.goto}>
-                  <Button variant="ghost" className="w-full justify-start">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                  >
                     {item.icon}
                     {item.label}
                   </Button>
@@ -110,24 +113,24 @@ const UpdateAsset = () => {
         </nav>
 
         {/* Profile Section */}
-        <div className="p-4">
-          <Separator className="mb-4" />
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <User className="w-4 h-4" />
+        <div className="p-4 bg-slate-50">
+          <Separator className="mb-4 opacity-50" />
+          <div className="flex items-center space-x-3 mb-4 p-2 bg-white rounded-lg shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <User className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm font-medium">{userProfile.name}</p>
-              <p className="text-xs text-gray-500">UID: {userProfile.uid}</p>
+              <p className="text-sm font-medium text-slate-800">
+                {userProfile.name}
+              </p>
+              <p className="text-xs text-slate-500">UID: {userProfile.uid}</p>
             </div>
           </div>
-        </div>
 
-        {/* Logout Section */}
-        <div className="p-4">
+          {/* Logout Button */}
           <Button
             variant="ghost"
-            className="w-full justify-start text-red-500 hover:text-red-700 hover:bg-red-50"
+            className="w-full justify-start text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Logout
@@ -135,22 +138,31 @@ const UpdateAsset = () => {
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 p-8 lg:p-8 pt-20 lg:pt-8">
-        {/* mother div for EquipmentForm */}
-        <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col">
-          <h2 className="text-2xl font-semibold mb-4">Update Asset List</h2>
-          <p className="text-gray-600 mb-4">
-            Fill out the form to add assets to the database.
-          </p>
-          {/* Wrapper with scrollable behavior */}
-          <div className="flex-1 overflow-y-auto">
-            <EquipmentForm />
+      {/* Main Content */}
+      <div className="flex-1 overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="bg-white shadow-sm border-b border-slate-200 p-6">
+          <h2 className="text-2xl font-semibold text-slate-800">
+            Update Asset List
+          </h2>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="p-6">
+              <h3 className="text-lg font-medium text-slate-800 mb-4">
+                Fill out the form to add assets to the database
+              </h3>
+              <div className="bg-slate-50 rounded-lg p-4">
+                <EquipmentForm />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Overlay for mobile when sidebar is open */}
+      {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30"
