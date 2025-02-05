@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,27 +21,217 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 
+interface Equipment {
+  equipment_id: string;
+  equipment_name: string;
+}
+
+interface Brand {
+  brand_id: string;
+  brand_name: string;
+}
+
+interface Model {
+  model_id: string;
+  model_name: string;
+}
+
 export default function AssetForm() {
-  const equipmentList = [
-    { value: "printer", label: "Printer" },
-    { value: "switch", label: "Switch" },
-    { value: "router", label: "Router" },
-  ];
+  const [formData, setFormData] = useState({
+    equipmentId: "",
+    itemName: "",
+    itemVariation: "",
+    brandId: "",
+    modelId: "",
+    manufactureNo: "",
+    statusDetails: "",
+    remarks: "",
+    lineName: "",
+    storeName: "",
+    presentFactory: "",
+    ownerFactory: "",
+    physicalLocation: "",
+    licenseNo: "",
+    rcvNo: "",
+    invoiceNo: "",
+    poNo: "",
+    vendor: "",
+    unitPrice: "",
+    currency: "",
+    ipAddress: "",
+    subnetMask: "",
+    gateway: "",
+    dns: "",
+    ethernetDetails: "",
+    hostName: "",
+    operatingSystem: "",
+    platform: "",
+    provisionedSpace: "",
+    usedSpace: "",
+    memorySize: "",
+    ramDetails: "",
+    cpuModel: "",
+    cpuClock: "",
+    licenseDate: undefined as Date | undefined,
+    shipDate: undefined as Date | undefined,
+    startDate: undefined as Date | undefined,
+    expirationDate: undefined as Date | undefined,
+  });
 
-  const [startDate, setStartDate] = React.useState<Date>();
-  const [expirationDate, setExpirationDate] = React.useState<Date>();
-  const [licenseDate, setLicenseDate] = React.useState<Date>();
-  const [shipDate, setShipDate] = React.useState<Date>();
+  const [equipment, setEquipment] = useState<Equipment[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [models, setModels] = useState<Model[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [equipmentRes, brandsRes] = await Promise.all([
+          fetch("/api/equipment"),
+          fetch("/api/brand"),
+        ]);
+
+        if (!equipmentRes.ok || !brandsRes.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const equipmentData = await equipmentRes.json();
+        const brandsData = await brandsRes.json();
+
+        setEquipment(equipmentData);
+        setBrands(brandsData);
+      } catch (error) {
+        setError("Error loading data");
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (formData.brandId) {
+      const fetchModels = async () => {
+        try {
+          const response = await fetch(
+            `/api/selectedbrandmodel/${formData.brandId}`
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch models");
+          }
+          const data = await response.json();
+          setModels(data);
+        } catch (error) {
+          console.error("Error fetching models:", error);
+          setError("Error loading models");
+        }
+      };
+
+      fetchModels();
+    }
+  }, [formData.brandId]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleSelectChange = (field: string) => (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleDateChange =
+    (field: keyof typeof formData) => (date: Date | undefined) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: date,
+      }));
+    };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+    try {
+      const response = await fetch("/api/items", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit form");
+      }
+
+      alert("Asset added successfully");
+      // Reset form after successful submission
+      setFormData({
+        equipmentId: "",
+        itemName: "",
+        itemVariation: "",
+        brandId: "",
+        modelId: "",
+        manufactureNo: "",
+        statusDetails: "",
+        remarks: "",
+        lineName: "",
+        storeName: "",
+        presentFactory: "",
+        ownerFactory: "",
+        physicalLocation: "",
+        licenseNo: "",
+        rcvNo: "",
+        invoiceNo: "",
+        poNo: "",
+        vendor: "",
+        unitPrice: "",
+        currency: "",
+        ipAddress: "",
+        subnetMask: "",
+        gateway: "",
+        dns: "",
+        ethernetDetails: "",
+        hostName: "",
+        operatingSystem: "",
+        platform: "",
+        provisionedSpace: "",
+        usedSpace: "",
+        memorySize: "",
+        ramDetails: "",
+        cpuModel: "",
+        cpuClock: "",
+        licenseDate: undefined,
+        shipDate: undefined,
+        startDate: undefined,
+        expirationDate: undefined,
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setError("Failed to submit form");
+    }
   };
 
-  const formatDate = (date: Date | undefined) => {
-    if (!date) return "";
-    return format(date, "PPP");
-  };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">Loading...</div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center p-4">Error: {error}</div>;
+  }
 
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8 p-8">
@@ -52,15 +242,18 @@ export default function AssetForm() {
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="statusDetails">Equipment Type*</Label>
-            <Select>
+            <Label htmlFor="equipmentId">Equipment Type*</Label>
+            <Select
+              value={formData.equipmentId}
+              onValueChange={handleSelectChange("equipmentId")}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select equipment type" />
               </SelectTrigger>
               <SelectContent>
-                {equipmentList.map((item, index) => (
-                  <SelectItem key={index} value={item.value}>
-                    {item.label}
+                {equipment.map((item) => (
+                  <SelectItem key={item.equipment_id} value={item.equipment_id}>
+                    {item.equipment_name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -68,35 +261,38 @@ export default function AssetForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="statusDetails">Item Name*</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select item name" />
-              </SelectTrigger>
-              <SelectContent>
-                {equipmentList.map((item, index) => (
-                  <SelectItem key={index} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="itemName">Item Name*</Label>
+            <Input
+              id="itemName"
+              value={formData.itemName}
+              onChange={handleInputChange}
+              placeholder="Enter Item Name"
+            />
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="itemVariation">Item Variation</Label>
-            <Input id="itemVariation" placeholder="Enter Item Variation" />
+            <Input
+              id="itemVariation"
+              value={formData.itemVariation}
+              onChange={handleInputChange}
+              placeholder="Enter Item Variation"
+            />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="statusDetails">Brand*</Label>
-            <Select>
+            <Label htmlFor="brandId">Brand*</Label>
+            <Select
+              value={formData.brandId}
+              onValueChange={handleSelectChange("brandId")}
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Select brand name" />
+                <SelectValue placeholder="Select brand" />
               </SelectTrigger>
               <SelectContent>
-                {equipmentList.map((item, index) => (
-                  <SelectItem key={index} value={item.value}>
-                    {item.label}
+                {brands.map((brand) => (
+                  <SelectItem key={brand.brand_id} value={brand.brand_id}>
+                    {brand.brand_name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -104,27 +300,32 @@ export default function AssetForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="statusDetails">Model*</Label>
-            <Select>
+            <Label htmlFor="modelId">Model*</Label>
+            <Select
+              value={formData.modelId}
+              onValueChange={handleSelectChange("modelId")}
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Select equipment model" />
+                <SelectValue placeholder="Select model" />
               </SelectTrigger>
               <SelectContent>
-                {equipmentList.map((item, index) => (
-                  <SelectItem key={index} value={item.value}>
-                    {item.label}
+                {models.map((model) => (
+                  <SelectItem key={model.model_id} value={model.model_id}>
+                    {model.model_name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="tagId">Tag ID*</Label>
-            <Input id="tagId" placeholder="Enter Tag ID" />
-          </div>
+
           <div className="space-y-2">
             <Label htmlFor="manufactureNo">Manufacture No</Label>
-            <Input id="manufactureNo" placeholder="Enter Manufacture No" />
+            <Input
+              id="manufactureNo"
+              value={formData.manufactureNo}
+              onChange={handleInputChange}
+              placeholder="Enter Manufacture No"
+            />
           </div>
         </CardContent>
       </Card>
@@ -137,33 +338,47 @@ export default function AssetForm() {
         <CardContent className="grid gap-4">
           <div className="space-y-2">
             <Label htmlFor="statusDetails">Status Details</Label>
-            <Select>
+            <Select
+              value={formData.statusDetails}
+              onValueChange={handleSelectChange("statusDetails")}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">Issued</SelectItem>
-                <SelectItem value="inactive">Not Identified</SelectItem>
-                <SelectItem value="maintenance">
+                <SelectItem value="Issued">Issued</SelectItem>
+                <SelectItem value="Not Identified">Not Identified</SelectItem>
+                <SelectItem value="Backup (Ready to go)">
                   Backup (Ready to go)
                 </SelectItem>
-                <SelectItem value="maintenance">Idle (ready to go)</SelectItem>
-                <SelectItem value="maintenance">Disposed (scraped)</SelectItem>
-                <SelectItem value="maintenance">
+                <SelectItem value="Idle (ready to go)">
+                  Idle (ready to go)
+                </SelectItem>
+                <SelectItem value="Disposed (scraped)">
+                  Disposed (scraped)
+                </SelectItem>
+                <SelectItem value="Disposed (not scraped)">
                   Disposed (not scraped)
                 </SelectItem>
-                <SelectItem value="maintenance">Under Maintenance</SelectItem>
-                <SelectItem value="maintenance">
+                <SelectItem value="Under Maintenance">
+                  Under Maintenance
+                </SelectItem>
+                <SelectItem value="In Transition (Location)">
                   In Transition (Location)
                 </SelectItem>
-                <SelectItem value="maintenance">Newly Recieved</SelectItem>
-                <SelectItem value="maintenance">Back to Vendor</SelectItem>
+                <SelectItem value="Newly Received">Newly Received</SelectItem>
+                <SelectItem value="Back to Vendor">Back to Vendor</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="remark">Remarks</Label>
-            <Textarea id="remark" placeholder="Enter remarks" />
+            <Label htmlFor="remarks">Remarks</Label>
+            <Textarea
+              id="remarks"
+              value={formData.remarks}
+              onChange={handleInputChange}
+              placeholder="Enter remarks"
+            />
           </div>
         </CardContent>
       </Card>
@@ -176,24 +391,46 @@ export default function AssetForm() {
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="lineName">Line Name</Label>
-            <Input id="lineName" placeholder="Enter Line Name" />
+            <Input
+              id="lineName"
+              value={formData.lineName}
+              onChange={handleInputChange}
+              placeholder="Enter Line Name"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="storeName">Store Name</Label>
-            <Input id="storeName" placeholder="Enter Store Name" />
+            <Input
+              id="storeName"
+              value={formData.storeName}
+              onChange={handleInputChange}
+              placeholder="Enter Store Name"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="presentFactory">Present Factory</Label>
-            <Input id="presentFactory" placeholder="Enter Present Factory" />
+            <Input
+              id="presentFactory"
+              value={formData.presentFactory}
+              onChange={handleInputChange}
+              placeholder="Enter Present Factory"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="ownerFactory">Owner Factory</Label>
-            <Input id="ownerFactory" placeholder="Enter Owner Factory" />
+            <Input
+              id="ownerFactory"
+              value={formData.ownerFactory}
+              onChange={handleInputChange}
+              placeholder="Enter Owner Factory"
+            />
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="physicalLocation">Physical Location</Label>
             <Textarea
               id="physicalLocation"
+              value={formData.physicalLocation}
+              onChange={handleInputChange}
               placeholder="Enter Physical Location"
             />
           </div>
@@ -208,7 +445,12 @@ export default function AssetForm() {
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="licenseNo">License No</Label>
-            <Input id="licenseNo" placeholder="Enter License No" />
+            <Input
+              id="licenseNo"
+              value={formData.licenseNo}
+              onChange={handleInputChange}
+              placeholder="Enter License No"
+            />
           </div>
           <div className="space-y-2">
             <Label>License Date</Label>
@@ -216,14 +458,17 @@ export default function AssetForm() {
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {licenseDate ? format(licenseDate, "PPP") : "Select date"}
+                  {formData.licenseDate
+                    ? format(formData.licenseDate, "PPP")
+                    : "Select date"}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={licenseDate}
-                  onSelect={setLicenseDate}
+                  selected={formData.licenseDate}
+                  onSelect={handleDateChange("licenseDate")}
+                  initialFocus
                 />
               </PopoverContent>
             </Popover>
@@ -239,20 +484,37 @@ export default function AssetForm() {
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="rcvNo">RCV No</Label>
-            <Input id="rcvNo" placeholder="Enter RCV No" />
+            <Input
+              id="rcvNo"
+              value={formData.rcvNo}
+              onChange={handleInputChange}
+              placeholder="Enter RCV No"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="invoiceNo">Invoice No</Label>
-            <Input id="invoiceNo" placeholder="Enter Invoice No" />
+            <Input
+              id="invoiceNo"
+              value={formData.invoiceNo}
+              onChange={handleInputChange}
+              placeholder="Enter Invoice No"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="poNo">PO No</Label>
-            <Input id="poNo" placeholder="Enter PO No" />
+            <Input
+              id="poNo"
+              value={formData.poNo}
+              onChange={handleInputChange}
+              placeholder="Enter PO No"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="supplierVendor">Supplier/Vendor Name</Label>
             <Input
               id="supplierVendor"
+              value={formData.vendor}
+              onChange={handleInputChange}
               placeholder="Enter Supplier/Vendor Name"
             />
           </div>
@@ -260,7 +522,9 @@ export default function AssetForm() {
             <Label htmlFor="unitPrice">Unit Price</Label>
             <Input
               id="unitPrice"
+              value={formData.unitPrice}
               type="number"
+              onChange={handleInputChange}
               placeholder="Enter Unit Price"
             />
           </div>
@@ -284,14 +548,17 @@ export default function AssetForm() {
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {shipDate ? format(shipDate, "PPP") : "Select date"}
+                  {formData.shipDate
+                    ? format(formData.shipDate, "PPP")
+                    : "Select date"}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={shipDate}
-                  onSelect={setShipDate}
+                  selected={formData.shipDate}
+                  onSelect={handleDateChange("shipDate")}
+                  initialFocus
                 />
               </PopoverContent>
             </Popover>
@@ -307,24 +574,46 @@ export default function AssetForm() {
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="ipAddress">IP Address</Label>
-            <Input id="ipAddress" placeholder="Enter IP Address" />
+            <Input
+              id="ipAddress"
+              value={formData.ipAddress}
+              onChange={handleInputChange}
+              placeholder="Enter IP Address"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="subnetMask">Subnet Mask</Label>
-            <Input id="subnetMask" placeholder="Enter Subnet Mask" />
+            <Input
+              id="subnetMask"
+              value={formData.subnetMask}
+              onChange={handleInputChange}
+              placeholder="Enter Subnet Mask"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="gateway">Gateway</Label>
-            <Input id="gateway" placeholder="Enter Gateway" />
+            <Input
+              id="gateway"
+              value={formData.gateway}
+              onChange={handleInputChange}
+              placeholder="Enter Gateway"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="dns">DNS</Label>
-            <Input id="dns" placeholder="Enter DNS" />
+            <Input
+              id="dns"
+              value={formData.dns}
+              onChange={handleInputChange}
+              placeholder="Enter DNS"
+            />
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="ethernetDetails">Ethernet Details</Label>
             <Textarea
               id="ethernetDetails"
+              value={formData.ethernetDetails}
+              onChange={handleInputChange}
               placeholder="Enter Ethernet Details"
             />
           </div>
@@ -339,42 +628,84 @@ export default function AssetForm() {
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="hostName">Host Name</Label>
-            <Input id="hostName" placeholder="Enter Host Name" />
+            <Input
+              id="hostName"
+              value={formData.hostName}
+              onChange={handleInputChange}
+              placeholder="Enter Host Name"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="operatingSystem">Operating System</Label>
-            <Input id="operatingSystem" placeholder="Enter Operating System" />
+            <Input
+              id="operatingSystem"
+              value={formData.operatingSystem}
+              onChange={handleInputChange}
+              placeholder="Enter Operating System"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="platform">Platform</Label>
-            <Input id="platform" placeholder="Enter Platform" />
+            <Input
+              id="platform"
+              value={formData.platform}
+              onChange={handleInputChange}
+              placeholder="Enter Platform"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="provisionedSpace">Provisioned Space</Label>
             <Input
               id="provisionedSpace"
+              value={formData.provisionedSpace}
+              onChange={handleInputChange}
               placeholder="Enter Provisioned Space"
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="usedSpace">Used Space</Label>
-            <Input id="usedSpace" placeholder="Enter Used Space" />
+            <Input
+              id="usedSpace"
+              value={formData.usedSpace}
+              onChange={handleInputChange}
+              placeholder="Enter Used Space"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="memorySize">Memory Size</Label>
-            <Input id="memorySize" placeholder="Enter Memory Size" />
+            <Input
+              id="memorySize"
+              value={formData.memorySize}
+              onChange={handleInputChange}
+              placeholder="Enter Memory Size"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="ramDetails">RAM Details</Label>
-            <Input id="ramDetails" placeholder="Enter RAM Details" />
+            <Input
+              id="ramDetails"
+              value={formData.ramDetails}
+              onChange={handleInputChange}
+              placeholder="Enter RAM Details"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="cpuModel">CPU Model</Label>
-            <Input id="cpuModel" placeholder="Enter CPU Model" />
+            <Input
+              id="cpuModel"
+              value={formData.cpuModel}
+              onChange={handleInputChange}
+              placeholder="Enter CPU Model"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="cpuClock">CPU Clock</Label>
-            <Input id="cpuClock" placeholder="Enter CPU Clock" />
+            <Input
+              id="cpuClock"
+              value={formData.cpuClock}
+              onChange={handleInputChange}
+              placeholder="Enter CPU Clock"
+            />
           </div>
         </CardContent>
       </Card>
@@ -382,7 +713,7 @@ export default function AssetForm() {
       {/* Dates and Timeframes */}
       <Card>
         <CardHeader>
-          <CardTitle>Dates and Timeframes</CardTitle>
+          <CardTitle>Dates and Time-frames</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
@@ -391,14 +722,17 @@ export default function AssetForm() {
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {startDate ? format(startDate, "PPP") : "Select date"}
+                  {formData.startDate
+                    ? format(formData.startDate, "PPP")
+                    : "Select date"}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={startDate}
-                  onSelect={setStartDate}
+                  selected={formData.startDate}
+                  onSelect={handleDateChange("startDate")}
+                  initialFocus
                 />
               </PopoverContent>
             </Popover>
@@ -409,16 +743,17 @@ export default function AssetForm() {
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {expirationDate
-                    ? format(expirationDate, "PPP")
+                  {formData.expirationDate
+                    ? format(formData.expirationDate, "PPP")
                     : "Select date"}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={expirationDate}
-                  onSelect={setExpirationDate}
+                  selected={formData.expirationDate}
+                  onSelect={handleDateChange("expirationDate")}
+                  initialFocus
                 />
               </PopoverContent>
             </Popover>
