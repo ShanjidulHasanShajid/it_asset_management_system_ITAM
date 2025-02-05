@@ -53,6 +53,67 @@ const AssetAdministration = () => {
   const [equipments, setEquipments] = useState<Equipment[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userProfile, setUserProfile] = useState({
+    name: "",
+    uid: "",
+  });
+  const router = useRouter();
+
+  // Authentication and user profile check
+  useEffect(() => {
+    const checkAuth = () => {
+      const dept = sessionStorage.getItem("dept");
+      const userId = sessionStorage.getItem("userId");
+      const userName = sessionStorage.getItem("userName");
+
+      if (!dept || dept !== "Super Admin") {
+        // Clear session storage
+        sessionStorage.clear();
+        // Prevent going back
+        window.history.pushState(null, "", "/");
+        router.push("/");
+        return false;
+      }
+
+      // Update user profile from session storage
+      setUserProfile({
+        name: userName || "",
+        uid: userId || "",
+      });
+
+      return true;
+    };
+
+    // Initial auth check
+    const authStatus = checkAuth();
+    setIsAuthenticated(authStatus);
+
+    // Add event listener for popstate (browser back/forward)
+    const handlePopState = () => {
+      const authStatus = checkAuth();
+      if (!authStatus) {
+        // Prevent going back if not authenticated
+        window.history.pushState(null, "", "/");
+        router.push("/");
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    // Clean up
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [router]);
+
+  // Handle logout
+  const handleLogout = () => {
+    sessionStorage.clear();
+    window.history.pushState(null, "", "/");
+    router.push("/");
+  };
+
   // Fetch functions
   const fetchCategories = async () => {
     try {
@@ -93,16 +154,6 @@ const AssetAdministration = () => {
       console.error("Error fetching teams:", error);
     }
   };
-
-  const router = useRouter();
-  useEffect(() => {
-    const dept = sessionStorage.getItem("dept");
-    console.log(sessionStorage);
-
-    if (!dept || dept !== "Super Admin") {
-      router.push("/"); // Redirect to login page if the user is not a super admin
-    }
-  });
 
   useEffect(() => {
     fetchCategories();
@@ -226,11 +277,6 @@ const AssetAdministration = () => {
     },
   ];
 
-  const userProfile = {
-    name: "John Doe",
-    uid: "AD123456",
-  };
-
   return (
     <div className="flex h-screen bg-slate-50">
       {/* Sidebar Toggle Button */}
@@ -298,6 +344,7 @@ const AssetAdministration = () => {
           <Button
             variant="ghost"
             className="w-full justify-start text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
+            onClick={handleLogout}
           >
             <LogOut className="w-4 h-4 mr-2" />
             Logout

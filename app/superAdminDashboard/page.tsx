@@ -22,17 +22,66 @@ import Link from "next/link";
 
 const SuperAdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userProfile, setUserProfile] = useState({
+    name: "",
+    uid: "",
+  });
   const router = useRouter();
 
+  // Authentication and user profile check
   useEffect(() => {
-    const dept = sessionStorage.getItem("dept");
-    console.log(sessionStorage);
+    const checkAuth = () => {
+      const dept = sessionStorage.getItem("dept");
+      const userId = sessionStorage.getItem("userId");
+      const userName = sessionStorage.getItem("userName");
 
-    if (!dept || dept !== "Super Admin") {
-      router.push("/"); // Redirect to login page if the user is not a super admin
-    }
-  });
+      if (!dept || dept !== "Super Admin") {
+        // Clear session storage
+        sessionStorage.clear();
+        // Prevent going back
+        window.history.pushState(null, "", "/");
+        router.push("/");
+        return false;
+      }
+
+      // Update user profile from session storage
+      setUserProfile({
+        name: userName || "",
+        uid: userId || "",
+      });
+
+      return true;
+    };
+
+    // Initial auth check
+    const authStatus = checkAuth();
+    setIsAuthenticated(authStatus);
+
+    // Add event listener for popstate (browser back/forward)
+    const handlePopState = () => {
+      const authStatus = checkAuth();
+      if (!authStatus) {
+        // Prevent going back if not authenticated
+        window.history.pushState(null, "", "/");
+        router.push("/");
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    // Clean up
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [router]);
+
+  // Handle logout
+  const handleLogout = () => {
+    sessionStorage.clear();
+    window.history.pushState(null, "", "/");
+    router.push("/");
+  };
 
   const menuItems = [
     {
@@ -72,11 +121,6 @@ const SuperAdminDashboard = () => {
       goto: "/superAdminDashboard/viewAsset",
     },
   ];
-
-  const userProfile = {
-    name: "John Doe",
-    uid: "AD123456",
-  };
 
   return (
     <div className="flex h-screen bg-gray-100 relative">
@@ -140,7 +184,8 @@ const SuperAdminDashboard = () => {
           <Link href="/">
             <Button
               variant="ghost"
-              className="w-full justify-start text-red-500 hover:text-red-700 hover:bg-red-50"
+              className="w-full justify-start text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
+              onClick={handleLogout}
             >
               <LogOut className="w-4 h-4 mr-2" />
               Logout
