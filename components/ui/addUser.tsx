@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,12 @@ interface AddUserProps {
   onUserAdded: () => void;
   teams: Team[];
 }
+
+const departmentOptions = [
+  { value: "Super Admin", label: "Super Admin" },
+  { value: "Admin", label: "Admin" },
+  { value: "IT Member", label: "IT Member" },
+];
 
 export default function AddUser({ onUserAdded, teams }: AddUserProps) {
   const [userName, setUserName] = useState("");
@@ -93,17 +99,6 @@ export default function AddUser({ onUserAdded, teams }: AddUserProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="dept">Department</Label>
-            <Input
-              id="dept"
-              value={dept}
-              onChange={(e) => setDept(e.target.value)}
-              placeholder="Enter department"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor="team">Select Team</Label>
             <Select onValueChange={(value) => setTeamId(value)}>
               <SelectTrigger>
@@ -113,6 +108,22 @@ export default function AddUser({ onUserAdded, teams }: AddUserProps) {
                 {teams.map((team) => (
                   <SelectItem key={team.team_id} value={team.team_id}>
                     {team.team_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="dept">Select Department</Label>
+            <Select onValueChange={(value) => setDept(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Department" />
+              </SelectTrigger>
+              <SelectContent>
+                {departmentOptions.map((dept) => (
+                  <SelectItem key={dept.value} value={dept.value}>
+                    {dept.label}
                   </SelectItem>
                 ))}
               </SelectContent>

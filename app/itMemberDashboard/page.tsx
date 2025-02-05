@@ -25,31 +25,20 @@ const SuperAdminDashboard = () => {
       id: 1,
       label: "Home",
       icon: <House className="w-4 h-4 mr-2" />,
-      goto: "/adminDashboard",
+      goto: "/itMemberDashboard",
     },
-    {
-      id: 3,
-      label: "User Administration",
-      icon: <UserRoundPlus className="w-4 h-4 mr-2" />,
-      goto: "/adminDashboard/userAdministration",
-    },
-    {
-      id: 4,
-      label: "Add Brand & Model",
-      icon: <PackagePlus className="w-4 h-4 mr-2" />,
-      goto: "/adminDashboard/brands",
-    },
+
     {
       id: 5,
       label: "Update Asset List",
       icon: <ClipboardPlus className="w-4 h-4 mr-2" />,
-      goto: "/adminDashboard/updateAsset",
+      goto: "/itMemberDashboard/updateAsset",
     },
     {
       id: 6,
       label: "View Assets",
       icon: <ScanSearch className="w-4 h-4 mr-2" />,
-      goto: "/adminDashboard/viewAsset",
+      goto: "/itMemberDashboard/viewAsset",
     },
   ];
 
@@ -82,7 +71,7 @@ const SuperAdminDashboard = () => {
         {/* Logo/Title Section */}
         <div className="p-6 pl-16 lg:pl-6">
           {/* Added padding-left for spacing */}
-          <h1 className="text-xl font-bold">Admin Dashboard</h1>
+          <h1 className="text-xl font-bold">IT User Dashboard</h1>
         </div>
         <Separator />
         {/* Navigation Menu */}
@@ -133,7 +122,7 @@ const SuperAdminDashboard = () => {
       <div className="flex-1 p-8 lg:p-8 pt-20 lg:pt-8">
         <div className="bg-white rounded-lg shadow-lg p-6 h-full">
           <h2 className="text-2xl font-semibold mb-4">
-            Welcome to Admin Dashboard
+            Welcome to IT User Dashboard
           </h2>
           <p className="text-gray-600">
             Select an option from the sidebar to get started.
