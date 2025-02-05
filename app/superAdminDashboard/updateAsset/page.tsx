@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import EquipmentForm from "@/components/ui/assetForm";
+import AssetForm from "@/components/ui/assetForm";
 import {
   House,
   PackagePlus,
@@ -213,7 +213,7 @@ const UpdateAsset = () => {
                 Fill out the form to add assets to the database
               </h3>
               <div className="bg-slate-50 rounded-lg p-4">
-                <EquipmentForm />
+                <AssetForm />
               </div>
             </div>
           </div>

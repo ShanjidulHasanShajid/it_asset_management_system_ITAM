@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 
-export default function EquipmentForm() {
+export default function AssetForm() {
   const equipmentList = [
     { value: "printer", label: "Printer" },
     { value: "switch", label: "Switch" },
@@ -435,5 +435,3 @@ export default function EquipmentForm() {
     </form>
   );
 }
-
-// export default EquipmentForm;
