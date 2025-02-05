@@ -510,12 +510,12 @@ export default function AssetForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="supplierVendor">Supplier/Vendor Name</Label>
+            <Label htmlFor="supplierVendor">Vendor Name</Label>
             <Input
               id="supplierVendor"
               value={formData.vendor}
               onChange={handleInputChange}
-              placeholder="Enter Supplier/Vendor Name"
+              placeholder="Enter Vendor Name"
             />
           </div>
           <div className="space-y-2">
