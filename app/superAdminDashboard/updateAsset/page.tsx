@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import EquipmentForm from "@/components/ui/assetForm";
 import {
@@ -19,6 +21,16 @@ import Link from "next/link";
 
 const UpdateAsset = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const router = useRouter();
+  useEffect(() => {
+    const dept = sessionStorage.getItem("dept");
+    console.log(sessionStorage);
+
+    if (!dept || dept !== "Super Admin") {
+      router.push("/"); // Redirect to login page if the user is not a super admin
+    }
+  });
 
   const menuItems = [
     {

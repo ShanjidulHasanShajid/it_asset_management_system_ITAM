@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   House,
@@ -23,6 +24,16 @@ const Brands = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [brands, setBrands] = useState([]);
   const [models, setModels] = useState([]);
+
+  const router = useRouter();
+  useEffect(() => {
+    const dept = sessionStorage.getItem("dept");
+    console.log(sessionStorage);
+
+    if (!dept || dept !== "Admin") {
+      router.push("/"); // Redirect to login page if the user is not a super admin
+    }
+  });
 
   // Fetch brands
   const fetchBrands = async () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -26,10 +26,38 @@ const LoginForm = () => {
     team: "",
     password: "",
   });
+  const router = useRouter(); // Used for navigation after login
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+
+    // Sending credentials to the API
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      // Save user info in session
+      sessionStorage.setItem("userId", data.userId);
+      sessionStorage.setItem("userName", data.userName);
+      sessionStorage.setItem("dept", data.dept);
+      sessionStorage.setItem("teamId", data.teamId);
+
+      // Redirect based on the role of the user
+      if (data.role === "Super Admin") {
+        router.push("/superAdminDashboard");
+      } else if (data.role === "Admin") {
+        router.push("/adminDashboard");
+      } else if (data.role === "IT Member") {
+        router.push("/itMemberDashboard");
+      }
+    } else {
+      alert("Invalid credentials");
+    }
   };
 
   const teams = [

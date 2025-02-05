@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   House,
@@ -92,6 +93,16 @@ const AssetAdministration = () => {
       console.error("Error fetching teams:", error);
     }
   };
+
+  const router = useRouter();
+  useEffect(() => {
+    const dept = sessionStorage.getItem("dept");
+    console.log(sessionStorage);
+
+    if (!dept || dept !== "Super Admin") {
+      router.push("/"); // Redirect to login page if the user is not a super admin
+    }
+  });
 
   useEffect(() => {
     fetchCategories();

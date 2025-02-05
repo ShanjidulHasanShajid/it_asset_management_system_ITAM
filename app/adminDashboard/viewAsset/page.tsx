@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import TableView from "../../../components/ui/tableView";
 import { Button } from "@/components/ui/button";
 import {
@@ -149,6 +151,16 @@ const columns = [
 
 const ViewAsset = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const router = useRouter();
+  useEffect(() => {
+    const dept = sessionStorage.getItem("dept");
+    console.log(sessionStorage);
+
+    if (!dept || dept !== "Admin") {
+      router.push("/"); // Redirect to login page if the user is not a super admin
+    }
+  });
 
   const menuItems = [
     {
