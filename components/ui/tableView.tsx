@@ -7,7 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2 } from "lucide-react";
+import { Trash2, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,6 +37,7 @@ interface TableViewProps {
 const TableView = ({ data, columns, onDelete, tableName }: TableViewProps) => {
   const [deleteItem, setDeleteItem] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleDelete = async () => {
     if (!deleteItem || !onDelete) return;
@@ -50,8 +52,26 @@ const TableView = ({ data, columns, onDelete, tableName }: TableViewProps) => {
     }
   };
 
+  const filteredData = data.filter((row) =>
+    Object.values(row).some((value) =>
+      String(value).toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
+
   return (
     <div className="relative w-full overflow-hidden">
+      {/* Search Bar */}
+      <div className="relative mb-4">
+        <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+        <Input
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-8 max-w-sm"
+        />
+      </div>
+
+      {/* Table */}
       <div className="overflow-x-auto">
         <Table>
           <TableHeader className="sticky top-0 z-10">
@@ -68,7 +88,7 @@ const TableView = ({ data, columns, onDelete, tableName }: TableViewProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((row, rowIndex) => (
+            {filteredData.map((row, rowIndex) => (
               <TableRow
                 key={rowIndex}
                 className="hover:bg-gray-50 transition-colors"
@@ -117,7 +137,7 @@ const TableView = ({ data, columns, onDelete, tableName }: TableViewProps) => {
                 </TableCell>
               </TableRow>
             ))}
-            {data.length === 0 && (
+            {filteredData.length === 0 && (
               <TableRow>
                 <TableCell
                   colSpan={columns.length + 1}
