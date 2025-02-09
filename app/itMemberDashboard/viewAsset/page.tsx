@@ -112,7 +112,13 @@ const ViewAsset = () => {
     try {
       const response = await fetch("/api/item");
       const data = await response.json();
-      setItems(data);
+      // Sort the data
+      const sortedData = data.sort(
+        (a: { item_id: string }, b: { item_id: string }) => {
+          return a.item_id.localeCompare(b.item_id);
+        }
+      );
+      setItems(sortedData);
     } catch (error) {
       console.error("Error fetching items:", error);
     }

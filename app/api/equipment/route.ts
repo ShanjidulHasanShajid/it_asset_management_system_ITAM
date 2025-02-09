@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 dotenv.config();
@@ -10,9 +10,14 @@ const db = await mysql.createConnection({
   database: process.env.DB_NAME,
 });
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const [rows] = await db.execute(`
+    // Get values from cookies
+    const dept = req.cookies.get("dept")?.value;
+    const teamId = req.cookies.get("teamId")?.value;
+
+    // Base query
+    let query = `
       SELECT 
         e.equipment_id,
         e.equipment_name,
@@ -21,8 +26,21 @@ export async function GET() {
       FROM equipment_t e
       JOIN sub_category_t s ON e.sub_category_id = s.sub_category_id
       JOIN teams_t t ON e.team_id = t.team_id
-      ORDER BY e.equipment_id
-    `);
+    `;
+
+    // Add WHERE clause if user is not Admin or Super Admin
+    if (dept !== "Super Admin" && dept !== "Admin") {
+      query += ` WHERE e.team_id = ?`;
+    }
+
+    query += ` ORDER BY e.equipment_id`;
+
+    // Execute query with or without parameter based on dept
+    const [rows] = await db.execute(
+      query,
+      dept !== "Super Admin" && dept !== "Admin" ? [teamId] : []
+    );
+
     return NextResponse.json(rows);
   } catch (error) {
     console.error("Database error:", error);
