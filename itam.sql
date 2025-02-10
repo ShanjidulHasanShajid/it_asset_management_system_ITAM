@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 06, 2025 at 12:54 AM
+-- Generation Time: Feb 10, 2025 at 06:14 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -78,7 +78,8 @@ CREATE TABLE `category_t` (
 INSERT INTO `category_t` (`category_id`, `category_name`) VALUES
 ('CAT1001', 'ITS Equipment'),
 ('CAT1002', 'Office Equipment'),
-('CAT1003', 'Network Equipment');
+('CAT1003', 'Network Equipment'),
+('CAT1004', 'dummy category 1');
 
 --
 -- Triggers `category_t`
@@ -156,7 +157,9 @@ INSERT INTO `equipment_t` (`equipment_id`, `equipment_name`, `sub_category_id`, 
 ('EQ1044', 'Scanner', 'SUB1004', 'T1004'),
 ('EQ1045', 'FAX Machine', 'SUB1004', 'T1004'),
 ('EQ1046', 'Speakerphone', 'SUB1004', 'T1004'),
-('EQ1047', 'Projector', 'SUB1010', 'T1002');
+('EQ1047', 'Projector', 'SUB1010', 'T1002'),
+('EQ1048', 'dummy equipment 01', 'SUB1011', 'T1003'),
+('EQ1049', 'dummy equipment 2', 'SUB1011', 'T1005');
 
 --
 -- Triggers `equipment_t`
@@ -224,7 +227,37 @@ CREATE TABLE `items_t` (
 --
 
 INSERT INTO `items_t` (`item_id`, `item_name`, `equipment_id`, `item_variation`, `brand_id`, `model_id`, `timestamp`, `manufacture_no`, `status_details`, `remarks`, `line_name`, `store_name`, `present_factory`, `owner_factory`, `physical_location`, `license_no`, `license_date`, `rcv_no`, `invoice_no`, `po_no`, `vendor`, `unit_price`, `currency`, `ship_date`, `ip_address`, `subnet_musk`, `gateway`, `DNS`, `ethernet_details`, `host_name`, `operating_system`, `platform`, `provioned_space`, `used_space`, `memory_size`, `ram_details`, `cpu_model`, `cpu_clock`, `start_date`, `expiration_date`) VALUES
-('IT100001', 'lala', 'EQ1002', 'asdad', 'B1003', 'M1006', '2025-02-05 23:46:32', 'adada', 'Disposed (not scraped)', 'adadad', 'dadad', 'adadad', 'adad', 'adad', 'adada', 'adadad', '2025-02-01', 'adadad', 'adadad', 'adadad', '', 12344, '', '2025-02-13', 'qdd', 'sdfsf', 'sfsfsf', 'sfsfs', 'sdfsfsf', '', '', '', 0, 0, 0, '', '', 0, '2025-02-01', '2025-02-24');
+('IT100001', 'lala', 'EQ1002', 'asdad', 'B1003', 'M1006', '2025-02-05 23:46:32', 'adada', 'Disposed (not scraped)', 'adadad', 'dadad', 'adadad', 'adad', 'adad', 'adada', 'adadad', '2025-02-01', 'adadad', 'adadad', 'adadad', '', 12344, '', '2025-02-13', 'qdd', 'sdfsf', 'sfsfsf', 'sfsfs', 'sdfsfsf', '', '', '', 0, 0, 0, '', '', 0, '2025-02-01', '2025-02-24'),
+('IT100002', 'Panasonic Printer', 'EQ1025', 'Laser Printer', 'B1008', 'M1015', '2025-02-09 12:56:59', 'PN123456', 'Operational', '', 'Line A', 'Store 1', 'Factory A', 'Factory B', 'Rack 5', 'LN7890', '2024-01-15', 'RCV9876', 'INV12345', 'PO54321', 'Panasonic Vendor', 500, 'USD', '2024-02-01', '192.168.1.10', '255.255.255.0', '192.168.1.1', '8.8.8.8', 'Ethernet 1', 'Printer-01', '', '', 0, 0, 0, '', '', 0, '2024-02-01', '2028-02-01'),
+('IT100003', 'Cisco Router X1', 'EQ1010', 'Dual-Band Wireless Router', 'B1001', 'M1001', '2025-02-09 12:56:59', 'RTR56789', 'Operational', 'New installation', 'Line B', 'Store 2', 'Factory C', 'Factory D', 'Rack 1', 'LN2345', '2024-02-01', 'RCV5678', 'INV23456', 'PO67890', 'Cisco Vendor', 1200, 'USD', '2024-02-05', '192.168.1.1', '255.255.255.0', '192.168.1.254', '8.8.4.4', 'Ethernet 2', 'Router-01', '', '', 0, 0, 0, '', '', 0, '2024-02-05', '2027-02-05'),
+('IT100004', 'Dell Latitude 5420', 'EQ1022', '14-inch Business Laptop', 'B1003', 'M1005', '2025-02-09 12:56:59', 'LT123456', 'Operational', '', 'Line C', 'Store 3', 'Factory A', 'Factory B', 'Desk 1', 'LN5678', '2024-03-01', 'RCV1234', 'INV34567', 'PO76543', 'Dell Vendor', 1500, 'USD', '2024-03-10', '', '', '', '', '', 'Laptop-01', 'Windows 11', 'x64', 512, 200, 16, 'DDR4', 'Intel i7', 3.5, '2024-03-10', '2027-03-10'),
+('IT100005', 'Cisco IP Phone Set', 'EQ1007', 'VOIP Office Phone', 'B1001', 'M1001', '2025-02-09 12:56:59', 'IP123456', 'Operational', '', 'Line D', 'Store 4', 'Factory B', 'Factory C', 'Desk 3', 'LN9876', '2024-02-10', 'RCV4321', 'INV65432', 'PO87654', 'Cisco Vendor', 250, 'USD', '2024-02-20', '', '', '', '', '', 'IP-Phone-01', '', '', 0, 0, 0, '', '', 0, '2024-02-20', '2028-02-20'),
+('IT100006', 'Samsung Storage Device', 'EQ1023', '1TB SSD', 'B1006', 'M1011', '2025-02-09 12:56:59', 'ST123456', 'Operational', '', 'Line E', 'Store 5', 'Factory C', 'Factory D', 'Server Room', 'LN4567', '2024-03-15', 'RCV6789', 'INV78910', 'PO34567', 'Samsung Vendor', 200, 'USD', '2024-03-20', '', '', '', '', '', 'Storage-01', '', '', 0, 0, 0, '', '', 0, '2024-03-20', '2027-03-20'),
+('IT100007', 'Panasonic Projector', 'EQ1027', 'Full HD 1080p', 'B1008', 'M1015', '2025-02-09 12:56:59', 'PJ123456', 'Operational', '', 'Line F', 'Store 6', 'Factory D', 'Factory A', 'Conference Room', 'LN8765', '2024-04-01', 'RCV4567', 'INV56789', 'PO12345', 'Panasonic Vendor', 800, 'USD', '2024-04-10', '', '', '', '', '', 'Projector-01', '', '', 0, 0, 0, '', '', 0, '2024-04-10', '2028-04-10'),
+('IT100008', 'HP PowerEdge Server', 'EQ1020', 'High-Performance Rack Server', 'B1002', 'M1019', '2025-02-09 12:56:59', 'SV123456', 'Operational', '', 'Line G', 'Store 7', 'Factory A', 'Factory B', 'Data Center', 'LN6543', '2024-04-15', 'RCV8765', 'INV23456', 'PO98765', 'HP Vendor', 5000, 'USD', '2024-04-20', '', '', '', '', '', 'Server-01', 'Linux', 'x64', 2048, 1000, 128, 'DDR4', 'Intel Xeon', 2.8, '2024-04-20', '2030-04-20'),
+('IT100009', 'Brother Printer', 'EQ1025', 'Laser Multifunction Printer', 'B1009', 'M1016', '2025-02-09 12:56:59', 'PR123456', 'Operational', '', 'Line H', 'Store 8', 'Factory C', 'Factory D', 'Office Floor', 'LN4321', '2024-05-01', 'RCV9876', 'INV34567', 'PO65432', 'Brother Vendor', 600, 'USD', '2024-05-10', '', '', '', '', '', 'Printer-02', '', '', 0, 0, 0, '', '', 0, '2024-05-10', '2029-05-10'),
+('IT100010', 'MacBook Pro 14', 'EQ1022', 'M1 Chip 16GB RAM', 'B1005', 'M1009', '2025-02-09 12:56:59', 'LT654321', 'Operational', '', 'Line I', 'Store 9', 'Factory D', 'Factory A', 'Workstation 1', 'LN3210', '2024-06-01', 'RCV6789', 'INV45678', 'PO78901', 'Apple Vendor', 2500, 'USD', '2024-06-10', '', '', '', '', '', 'MacBook-01', 'macOS', 'ARM64', 1024, 500, 16, 'DDR4', 'Apple M1', 3.2, '2024-06-10', '2029-06-10'),
+('IT100011', 'Cisco Firewall 7500', 'EQ1017', 'Enterprise Security Firewall', 'B1001', 'M1018', '2025-02-09 12:56:59', 'FW123456', 'Operational', '', 'Line J', 'Store 10', 'Factory B', 'Factory C', 'Server Rack 5', 'LN2109', '2024-07-01', 'RCV5678', 'INV67890', 'PO12345', 'Cisco Vendor', 3000, 'USD', '2024-07-10', '', '', '', '', '', 'Firewall-01', '', '', 0, 0, 0, '', '', 0, '2024-07-10', '2030-07-10'),
+('IT100012', 'Panasonic Printer', 'EQ1025', 'Laser Printer', 'B1008', 'M1015', '2025-02-09 13:03:40', 'PN123456', 'Idle (ready to go)', '', 'Line A', 'Store 1', 'Factory A', 'Factory B', 'Rack 5', 'LN7890', '2024-01-15', 'RCV9876', 'INV12345', 'PO54321', 'Panasonic Vendor', 500, 'USD', '2024-02-01', '192.168.1.10', '255.255.255.0', '192.168.1.1', '8.8.8.8', 'Ethernet 1', 'Printer-01', '', '', 0, 0, 0, '', '', 0, '2024-02-01', '2028-02-01'),
+('IT100013', 'Cisco Router X1', 'EQ1010', 'Dual-Band Wireless Router', 'B1001', 'M1001', '2025-02-09 13:03:40', 'RTR56789', 'Issued', 'New installation', 'Line B', 'Store 2', 'Factory C', 'Factory D', 'Rack 1', 'LN2345', '2024-02-01', 'RCV5678', 'INV23456', 'PO67890', 'Cisco Vendor', 1200, 'USD', '2024-02-05', '192.168.1.1', '255.255.255.0', '192.168.1.254', '8.8.4.4', 'Ethernet 2', 'Router-01', '', '', 0, 0, 0, '', '', 0, '2024-02-05', '2027-02-05'),
+('IT100014', 'Dell Latitude 5420', 'EQ1022', '14-inch Business Laptop', 'B1003', 'M1005', '2025-02-09 13:03:40', 'LT123456', 'Under Maintenance', '', 'Line C', 'Store 3', 'Factory A', 'Factory B', 'Desk 1', 'LN5678', '2024-03-01', 'RCV1234', 'INV34567', 'PO76543', 'Dell Vendor', 1500, 'USD', '2024-03-10', '', '', '', '', '', 'Laptop-01', 'Windows 11', 'x64', 512, 200, 16, 'DDR4', 'Intel i7', 3.5, '2024-03-10', '2027-03-10'),
+('IT100015', 'Cisco IP Phone Set', 'EQ1007', 'VOIP Office Phone', 'B1001', 'M1001', '2025-02-09 13:03:40', 'IP123456', 'Backup (Ready to go)', '', 'Line D', 'Store 4', 'Factory B', 'Factory C', 'Desk 3', 'LN9876', '2024-02-10', 'RCV4321', 'INV65432', 'PO87654', 'Cisco Vendor', 250, 'USD', '2024-02-20', '', '', '', '', '', 'IP-Phone-01', '', '', 0, 0, 0, '', '', 0, '2024-02-20', '2028-02-20'),
+('IT100016', 'Samsung Storage Device', 'EQ1023', '1TB SSD', 'B1006', 'M1011', '2025-02-09 13:03:40', 'ST123456', 'Disposed (scraped)', '', 'Line E', 'Store 5', 'Factory C', 'Factory D', 'Server Room', 'LN4567', '2024-03-15', 'RCV6789', 'INV78910', 'PO34567', 'Samsung Vendor', 200, 'USD', '2024-03-20', '', '', '', '', '', 'Storage-01', '', '', 0, 0, 0, '', '', 0, '2024-03-20', '2027-03-20'),
+('IT100017', 'Panasonic Projector', 'EQ1027', 'Full HD 1080p', 'B1008', 'M1015', '2025-02-09 13:03:40', 'PJ123456', 'Newly Received', '', 'Line F', 'Store 6', 'Factory D', 'Factory A', 'Conference Room', 'LN8765', '2024-04-01', 'RCV4567', 'INV56789', 'PO12345', 'Panasonic Vendor', 800, 'USD', '2024-04-10', '', '', '', '', '', 'Projector-01', '', '', 0, 0, 0, '', '', 0, '2024-04-10', '2028-04-10'),
+('IT100018', 'HP PowerEdge Server', 'EQ1020', 'High-Performance Rack Server', 'B1002', 'M1019', '2025-02-09 13:03:40', 'SV123456', 'Back to Vendor', '', 'Line G', 'Store 7', 'Factory A', 'Factory B', 'Data Center', 'LN6543', '2024-04-15', 'RCV8765', 'INV23456', 'PO98765', 'HP Vendor', 5000, 'USD', '2024-04-20', '', '', '', '', '', 'Server-01', 'Linux', 'x64', 2048, 1000, 128, 'DDR4', 'Intel Xeon', 2.8, '2024-04-20', '2030-04-20'),
+('IT100019', 'Brother Printer', 'EQ1025', 'Laser Multifunction Printer', 'B1009', 'M1016', '2025-02-09 13:03:40', 'PR123456', 'In Transition (Location)', '', 'Line H', 'Store 8', 'Factory C', 'Factory D', 'Office Floor', 'LN4321', '2024-05-01', 'RCV9876', 'INV34567', 'PO65432', 'Brother Vendor', 600, 'USD', '2024-05-10', '', '', '', '', '', 'Printer-02', '', '', 0, 0, 0, '', '', 0, '2024-05-10', '2029-05-10'),
+('IT100020', 'MacBook Pro 14', 'EQ1022', 'M1 Chip 16GB RAM', 'B1005', 'M1009', '2025-02-09 13:03:40', 'LT654321', 'Not Identified', '', 'Line I', 'Store 9', 'Factory D', 'Factory A', 'Workstation 1', 'LN3210', '2024-06-01', 'RCV6789', 'INV45678', 'PO78901', 'Apple Vendor', 2500, 'USD', '2024-06-10', '', '', '', '', '', 'MacBook-01', 'macOS', 'ARM64', 1024, 500, 16, 'DDR4', 'Apple M1', 3.2, '2024-06-10', '2029-06-10'),
+('IT100021', 'Cisco Firewall 7500', 'EQ1017', 'Enterprise Security Firewall', 'B1001', 'M1018', '2025-02-09 13:03:40', 'FW123456', 'Disposed (not scraped)', '', 'Line J', 'Store 10', 'Factory B', 'Factory C', 'Server Rack 5', 'LN2109', '2024-07-01', 'RCV5678', 'INV67890', 'PO12345', 'Cisco Vendor', 3000, 'USD', '2024-07-10', '', '', '', '', '', 'Firewall-01', '', '', 0, 0, 0, '', '', 0, '2024-07-10', '2030-07-10'),
+('IT100022', 'Dell Monitor', 'EQ1026', '24-inch Full HD', 'B1003', 'M1020', '2025-02-09 13:06:14', 'MN654321', 'Under Maintenance', '', 'Line A', 'Store 1', 'Factory A', 'Factory B', 'Office Desk', 'LN2345', '2024-02-01', 'RCV9876', 'INV87654', 'PO12345', 'Dell Vendor', 250, 'USD', '2024-02-05', '', '', '', '', '', 'Monitor-01', '', '', 0, 0, 0, '', '', 0, '2024-02-05', '2027-02-05'),
+('IT100023', 'Microsoft Webcam', 'EQ1031', 'HD 1080p', 'B1007', 'M1013', '2025-02-09 13:06:14', 'WB987654', 'Idle (ready to go)', '', 'Line B', 'Store 2', 'Factory C', 'Factory D', 'Rack 2', 'LN5678', '2024-03-01', 'RCV54321', 'INV65432', 'PO67890', 'Microsoft Vendor', 150, 'USD', '2024-03-10', '', '', '', '', '', 'Webcam-01', '', '', 0, 0, 0, '', '', 0, '2024-03-10', '2028-03-10'),
+('IT100024', 'Panasonic IP Camera', 'EQ1037', 'Night Vision Security Camera', 'B1008', 'M1015', '2025-02-09 13:06:14', 'IPCAM123', 'Issued', '', 'Line C', 'Store 3', 'Factory B', 'Factory C', 'Surveillance Room', 'LN8765', '2024-04-01', 'RCV78901', 'INV34567', 'PO76543', 'Panasonic Vendor', 900, 'USD', '2024-04-10', '', '', '', '', '', 'Camera-01', '', '', 0, 0, 0, '', '', 0, '2024-04-10', '2029-04-10'),
+('IT100025', 'Samsung Smart Terminal', 'EQ1036', 'POS Terminal', 'B1006', 'M1012', '2025-02-09 13:06:14', 'ST987654', 'Newly Received', '', 'Line D', 'Store 4', 'Factory C', 'Factory D', 'Checkout Counter', 'LN4321', '2024-05-01', 'RCV56789', 'INV23456', 'PO98765', 'Samsung Vendor', 1200, 'USD', '2024-05-10', '', '', '', '', '', 'Terminal-01', '', '', 0, 0, 0, '', '', 0, '2024-05-10', '2028-05-10'),
+('IT100026', 'HP EliteBook 850', 'EQ1022', 'Business Laptop 15-inch', 'B1002', 'M1003', '2025-02-09 13:06:14', 'LT654987', 'Disposed (scraped)', '', 'Line E', 'Store 5', 'Factory A', 'Factory B', 'Workstation 2', 'LN3210', '2024-06-01', 'RCV67890', 'INV56789', 'PO34567', 'HP Vendor', 2000, 'USD', '2024-06-10', '', '', '', '', '', 'Laptop-02', 'Windows 10', 'x64', 512, 300, 16, 'DDR4', 'Intel i5', 3.1, '2024-06-10', '2028-06-10'),
+('IT100027', 'LG Disc Writer', 'EQ1028', 'DVD/Blu-ray RW Drive', 'B1009', 'M1016', '2025-02-09 13:06:14', 'DW987654', 'Disposed (not scraped)', '', 'Line F', 'Store 6', 'Factory C', 'Factory D', 'Storage Room', 'LN2109', '2024-07-01', 'RCV34567', 'INV98765', 'PO12345', 'LG Vendor', 150, 'USD', '2024-07-10', '', '', '', '', '', 'DiscWriter-01', '', '', 0, 0, 0, '', '', 0, '2024-07-10', '2028-07-10'),
+('IT100028', 'Cisco Firewall 7500', 'EQ1017', 'Enterprise Security Firewall', 'B1001', 'M1018', '2025-02-09 13:06:14', 'FW654321', 'Back to Vendor', '', 'Line G', 'Store 7', 'Factory A', 'Factory B', 'Server Rack 3', 'LN7890', '2024-08-01', 'RCV45678', 'INV67890', 'PO54321', 'Cisco Vendor', 3500, 'USD', '2024-08-10', '', '', '', '', '', 'Firewall-02', '', '', 0, 0, 0, '', '', 0, '2024-08-10', '2029-08-10'),
+('IT100029', 'Bose Speaker', 'EQ1032', 'Wireless Bluetooth Speaker', 'B1009', 'M1017', '2025-02-09 13:06:14', 'SP123456', 'Not Identified', '', 'Line H', 'Store 8', 'Factory C', 'Factory D', 'Reception', 'LN8765', '2024-09-01', 'RCV23456', 'INV34567', 'PO65432', 'Bose Vendor', 300, 'USD', '2024-09-10', '', '', '', '', '', 'Speaker-01', '', '', 0, 0, 0, '', '', 0, '2024-09-10', '2029-09-10'),
+('IT100030', 'Canon Scanner', 'EQ1044', 'Flatbed A4 Scanner', 'B1010', 'M1017', '2025-02-09 13:06:14', 'SC654321', 'In Transition (Location)', '', 'Line I', 'Store 9', 'Factory D', 'Factory A', 'Admin Office', 'LN3210', '2024-10-01', 'RCV56789', 'INV23456', 'PO76543', 'Canon Vendor', 500, 'USD', '2024-10-10', '', '', '', '', '', 'Scanner-01', '', '', 0, 0, 0, '', '', 0, '2024-10-10', '2029-10-10'),
+('IT100031', 'Cisco Switch Z9', 'EQ1012', 'Managed Network Switch', 'B1001', 'M1002', '2025-02-09 13:06:14', 'SW987654', 'Backup (Ready to go)', '', 'Line J', 'Store 10', 'Factory B', 'Factory C', 'Network Rack', 'LN6543', '2024-11-01', 'RCV67890', 'INV98765', 'PO34567', 'Cisco Vendor', 1500, 'USD', '2024-11-10', '', '', '', '', '', 'Switch-01', '', '', 0, 0, 0, '', '', 0, '2024-11-10', '2029-11-10');
 
 --
 -- Triggers `items_t`
@@ -314,7 +347,8 @@ INSERT INTO `sub_category_t` (`sub_category_id`, `sub_category_name`, `category_
 ('SUB1007', 'Access Control', 'CAT1001'),
 ('SUB1008', 'Multi-Functional Machine', 'CAT1002'),
 ('SUB1009', 'Single Functional Machine', 'CAT1002'),
-('SUB1010', 'Visuals', 'CAT1002');
+('SUB1010', 'Visuals', 'CAT1002'),
+('SUB1011', 'dummy sub category 01', 'CAT1004');
 
 --
 -- Triggers `sub_category_t`
@@ -347,7 +381,8 @@ INSERT INTO `teams_t` (`team_id`, `team_name`) VALUES
 ('T1001', 'IT Networking Team'),
 ('T1002', 'IT Hardware Team'),
 ('T1003', 'IT Security and Access Control Team'),
-('T1004', 'IT Software Team');
+('T1004', 'IT Software Team'),
+('T1005', 'dummy team 01');
 
 --
 -- Triggers `teams_t`
@@ -389,7 +424,8 @@ INSERT INTO `user_t` (`user_id`, `user_name`, `password`, `team_id`, `dept`) VAL
 ('U1008', 'Franklin Evans', '1234', 'T1004', 'IT Member'),
 ('U1009', 'Shanjidul Hasan Shajid', '1234', 'T1001', 'Super Admin'),
 ('U1010', 'Sarwar Shahidi', '1234', 'T1004', 'Admin'),
-('U1011', 'Sakib Al Hasan', '1234', 'T1004', 'Admin');
+('U1011', 'Sakib Al Hasan', '1234', 'T1004', 'Admin'),
+('U1012', 'Abu Sayed', '1234', 'T1005', 'IT Member');
 
 --
 -- Triggers `user_t`
