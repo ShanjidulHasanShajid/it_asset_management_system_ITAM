@@ -1,9 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
 dotenv.config();
-
 const db = await mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -11,9 +10,13 @@ const db = await mysql.createConnection({
   database: process.env.DB_NAME,
 });
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const [rows] = await db.execute(`
+    // Get values from cookies
+    const dept = req.cookies.get("dept")?.value;
+    const teamId = req.cookies.get("teamId")?.value;
+
+    let query = `
       SELECT 
         i.item_id, 
         e.equipment_name, 
@@ -57,8 +60,19 @@ export async function GET() {
       JOIN 
         brands_t b ON i.brand_id = b.brand_id
       JOIN 
-        model_t m ON i.model_id = m.model_id;
-    `);
+        model_t m ON i.model_id = m.model_id
+    `;
+
+    // Add WHERE clause if user is not Admin or Super Admin
+    if (dept !== "Super Admin" && dept !== "Admin") {
+      query += ` WHERE e.team_id = ?`;
+    }
+
+    // Execute query with or without parameter based on dept
+    const [rows] = await db.execute(
+      query,
+      dept !== "Super Admin" && dept !== "Admin" ? [teamId] : []
+    );
 
     return NextResponse.json(rows);
   } catch (error) {

@@ -127,28 +127,9 @@ export default function AddEquipment({
           </div>
 
           <div className="sm:col-span-2 flex justify-end space-x-4">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button disabled={loading}>
-                  {loading ? "Adding..." : "Submit"}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Adding new Equipment</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action will add a new equipment to the database. Are
-                    you sure about this?
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleSubmit}>
-                    Yes
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
           </div>
         </CardContent>
       </Card>
