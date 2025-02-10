@@ -127,7 +127,7 @@ const LoginForm = () => {
 
           <CardFooter>
             <Button type="submit" className="w-full">
-              Sign In
+              Log In
             </Button>
           </CardFooter>
         </form>

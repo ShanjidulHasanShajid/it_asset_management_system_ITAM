@@ -17,7 +17,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import TableView from "@/components/ui/tableView";
-import AddUser from "@/components/ui/addUser";
+import AddUserTwo from "@/components/ui/addUserTwo";
 
 const UserAdministration = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -236,7 +236,7 @@ const UserAdministration = () => {
                 Add New User
               </h3>
               <div className="bg-slate-50 rounded-lg p-4">
-                <AddUser onUserAdded={fetchUsers} teams={teams} />
+                <AddUserTwo onUserAdded={fetchUsers} teams={teams} />
               </div>
             </div>
           </div>
